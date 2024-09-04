@@ -51,7 +51,7 @@ app.use("/user", userRouter);
 app.use("/admin", adminRouter(bucket));
 
 app.get("/", function (req, res) {
-	res.render(path.join(__dirname, "../public/views/index"));
+	return res.render(path.join(__dirname, "../public/views/index"));
 });
 
 
