@@ -39,13 +39,17 @@ const bucket = admin.storage().bucket();
 const app = express();
 
 const corsOptions = {
-	origin: '*', // Permite apenas essa origem
-	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-	allowedHeaders: ['Content-Type', 'Authorization'],
-	exposedHeaders: ['Authorization-token'], // Expondo o cabeçalho `Authorization-token`
+    origin: 'http://localhost:5173',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Authorization-token'],
+    credentials: true, // Se você precisar de suporte para cookies/autenticação
 };
 
 app.use(cors(corsOptions));
+
+// Habilitar CORS para todas as requisições `OPTIONS` (preflight)
+app.options('*', cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
 app.set("views", path.join(__dirname, "../public/views"));
