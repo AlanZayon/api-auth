@@ -12,6 +12,9 @@ const blacklist = new Set();
 
 
 const userController = {
+    teste: function (req, res) {
+        res.json("teste");
+    },
     homePage: function (req, res) {
         res.render("home");
     },
