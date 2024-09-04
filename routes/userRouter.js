@@ -4,6 +4,8 @@ const auth = require("../controllers/adminController");
 const { userController } = require("../controllers/userController");
 const resetUserDatasController = require("../controllers/resetUserDatasController");
 
+router.get("/", userController.teste);
+
 router.get("/redirect-home", userController.homePage);
 
 router.get("/redirect-register", userController.registerPage);
