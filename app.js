@@ -38,7 +38,6 @@ const bucket = admin.storage().bucket();
 
 const app = express();
 
-
 app.use(cors({
 	origin: 'http://localhost:5173', // ou '*' para permitir todas as origens
   }));
@@ -54,6 +53,11 @@ app.use("/admin", adminRouter(bucket));
 app.get("/", function (req, res) {
 	res.json("Hello World");
 });
+
+app.get("/usuarios", function (req, res) {
+	res.json("ususrios a mostra");
+});
+
 
 
 // Inicie o servidor
