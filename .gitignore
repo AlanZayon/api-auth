@@ -1,0 +1,7 @@
+
+# Ignorar arquivos .env em todas as subpastas
+.env
+config/site-kong-firebase-adminsdk-vessm-502be374ec.json
+
+
+
