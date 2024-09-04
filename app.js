@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "./.env") });
-const cors = require("cors");
+// const cors = require("cors");
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter");
 const mongoose = require("mongoose");
@@ -38,9 +38,9 @@ const bucket = admin.storage().bucket();
 
 const app = express();
 
-app.use(cors({
-	origin: 'http://localhost:5173', // ou '*' para permitir todas as origens
-  }));
+// app.use(cors({
+// 	origin: 'http://localhost:5173', // ou '*' para permitir todas as origens
+// }));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
