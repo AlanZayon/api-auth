@@ -38,10 +38,14 @@ const bucket = admin.storage().bucket();
 
 const app = express();
 
-app.use(cors({
-	origin: "*",
-	exposedHeaders: ["Authorization-token"],
-}));
+const corsOptions = {
+	origin: 'http://localhost:5173', // Permite apenas essa origem
+	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+	allowedHeaders: ['Content-Type', 'Authorization'],
+	exposedHeaders: ['Authorization-token'], // Expondo o cabeçalho `Authorization-token`
+  };
+  
+  app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
 app.set("views", path.join(__dirname, "../public/views"));
