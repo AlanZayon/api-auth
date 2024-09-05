@@ -105,7 +105,11 @@ const forgotPasswordFunctions = {
 		try {
 			const token = req.query.token;
 
+			console.log(token);
+
 			const userSelected = await User.findOne({ tokenVerify: token, resetTokenExpiration: { $gt: Date.now() } });
+
+			console.log(userSelected);
 
 			if (!userSelected) {
 				userSelected.findOneAndremove({ tokenVerify: token });
