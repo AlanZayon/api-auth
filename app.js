@@ -39,7 +39,7 @@ const bucket = admin.storage().bucket();
 const app = express();
 
 app.use((req, res, next) => {
-	res.header("Access-Control-Allow-Origin", "http://localhost:5173/"); // Permitir apenas de example.com
+	res.header("Access-Control-Allow-Origin", "https://api-auth-fg73-dgab5kqkz-alan-zayons-projects.vercel.app"); // Permitir apenas de example.com
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	next();
   });
