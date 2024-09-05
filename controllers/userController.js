@@ -118,7 +118,6 @@ const userController = {
     },
     login: async function (req, res) {
 
-
         const { error } = validate.loginValidates(req.body);
         if (error) { return res.status(400).send(error.message); }
 
