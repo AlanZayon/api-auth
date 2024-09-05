@@ -39,8 +39,10 @@ const bucket = admin.storage().bucket();
 const app = express();
 
 app.use(cors({
-	origin: 'http://localhost:5173', // ou '*' para permitir todas as origens
-}));
+	origin: '*', // Ou a URL específica do frontend
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+	allowedHeaders: ['Content-Type', 'Authorization']
+  }));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
