@@ -39,10 +39,10 @@ const bucket = admin.storage().bucket();
 const app = express();
 
 app.use(cors({
-	origin: '*', // Ou a URL específica do frontend
+	origin: 'http://localhost:5173', 
 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-	allowedHeaders: ['Content-Type', 'Authorization'],
-	exposedHeaders: ['Authorization-token']
+	allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-type'], 
+	exposedHeaders: ['Authorization']
   }));
 
 app.use(express.urlencoded({ extended: true }));
