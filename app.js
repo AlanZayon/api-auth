@@ -41,7 +41,8 @@ const app = express();
 app.use(cors({
 	origin: '*', // Ou a URL específica do frontend
 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-	allowedHeaders: ['Content-Type', 'Authorization']
+	allowedHeaders: ['Content-Type', 'Authorization'],
+	exposedHeaders: ['Authorization-token']
   }));
 
 app.use(express.urlencoded({ extended: true }));
