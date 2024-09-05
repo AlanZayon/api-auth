@@ -128,7 +128,7 @@ const forgotPasswordFunctions = {
 
 		} catch (error) {
 			console.error("Erro ao marcar email como verificado:", error);
-			res.status(500).send("Erro ao marcar email como verificado no Firebase.");
+			res.status(500).send("User not exist or token invalid.");
 		}
 
 
