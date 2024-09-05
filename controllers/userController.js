@@ -42,7 +42,6 @@ const userController = {
     register: async function (req, res) {
 
         let errors = [];
-        console.log(errors);
 
         const { error } = validate.registerValidates(req.body);
         if (error) {
@@ -63,7 +62,6 @@ const userController = {
 
         if (errors.length > 0) {
 
-            console.log(errors);
 
             return res.status(400).json({ errors });
         }
@@ -132,7 +130,6 @@ const userController = {
         const token = jwt.sign({ _id: userSelected._id, email: userSelected.email }, process.env.TOKEN_SECRET, { expiresIn: "24h" });
 
         const firebaseToken = await admin.auth().createCustomToken(userSelected._id.toString());
-        console.log("token do firebase: ",firebaseToken);
 
         res.header("Authorization-token", `Bearer ${token}`).send({ message: "logged", verifyStatus: userSelected.verified, firebaseToken: firebaseToken });
 

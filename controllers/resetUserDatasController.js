@@ -38,13 +38,7 @@ const forgotPasswordFunctions = {
 			html: `here your token ${resetLink}`
 		};
 
-		mailer.sendMail(mailOptions, (error, info) => {
-			if (error) {
-				console.log(error);
-			} else {
-				console.log("Email sent: " + info.response);
-			}
-		});
+		mailer.sendMail(mailOptions);
 
 		res.send("Password reset email sent");
 	},
@@ -65,12 +59,6 @@ const forgotPasswordFunctions = {
 			return res.status(404).send("User not found");
 		}
 		admin.auth().updateUser(uid, { email })
-			.then((userRecord) => {
-				console.log("E-mail do usuário atualizado com sucesso", userRecord.toJSON());
-			})
-			.catch((error) => {
-				console.log("Erro ao atualizar o e-mail:", error);
-			});
 
 		await admin.auth().updateUser(uid, { emailVerified: true });
 
@@ -90,13 +78,7 @@ const forgotPasswordFunctions = {
 			html: `here your link to verify tour account ${resetLink}`
 		};
 
-		mailer.sendMail(mailOptions, (error, info) => {
-			if (error) {
-				console.log(error);
-			} else {
-				console.log("Email sent: " + info.response);
-			}
-		});
+		mailer.sendMail(mailOptions);
 
 		res.send("Password reset email sent");
 	},
@@ -105,11 +87,7 @@ const forgotPasswordFunctions = {
 		try {
 			const token = req.query.token;
 
-			console.log(token);
-
 			const userSelected = await User.findOne({ tokenVerify: token, resetTokenExpiration: { $gt: Date.now() } });
-
-			console.log(userSelected);
 
 			if (!userSelected) {
 				userSelected.findOneAndremove({ tokenVerify: token });
@@ -127,7 +105,6 @@ const forgotPasswordFunctions = {
 			res.redirect("http://localhost:5173");
 
 		} catch (error) {
-			console.error("Erro ao marcar email como verificado:", error);
 			res.status(500).send("User not exist or token invalid.");
 		}
 
@@ -142,7 +119,6 @@ const forgotPasswordFunctions = {
 
 		const user = await User.findOne({ resetToken: req.body.resetToken, resetTokenExpiration: { $gt: Date.now() } });
 		if (!user) {
-			console.log(user);
 			return res.status(400).send("Invalid or expired token");
 		}
 
@@ -167,15 +143,12 @@ const forgotPasswordFunctions = {
 		const userId = req._id;
 
 		if (error) {
-			console.log("erro aqui");
-			console.log(error.message);
 			return res.status(400).send(error.message);
 		}
 
 		const userSelected = await User.findOne({ username: req.body.username });
 
 		if (userSelected) {
-			console.log("Username ja existe");
 			return res.status(400).send("Username ja existe");
 		}
 
@@ -208,8 +181,6 @@ const forgotPasswordFunctions = {
 
 		await userSelected.save();
 
-		console.log("Password reset successful");
-
 		res.status(200).send("Password reset successful");
 
 	},
@@ -234,13 +205,7 @@ const forgotPasswordFunctions = {
 			html: `here your code ${changeEmailCode}`
 		};
 
-		mailer.sendMail(mailOptions, (error, info) => {
-			if (error) {
-				console.log(error);
-			} else {
-				console.log("Email sent: " + info.response);
-			}
-		});
+		mailer.sendMail(mailOptions);
 
 		res.send("code reset to email sent");
 	},
@@ -252,15 +217,10 @@ const forgotPasswordFunctions = {
 			return res.status(404).send("User not found");
 		}
 
-		console.log(code);
-		console.log(user.codeToChageEmail);
-
 		if (user.codeToChageEmail !== code) {
 			return res.status(401).send("Códigos de verificação inválidos");
 		}
-		console.log(user.newEmail);
 		user.email = user.newEmail;
-		console.log(user.email);
 		user.newEmail = null;
 		user.codeToChageEmail = null;
 

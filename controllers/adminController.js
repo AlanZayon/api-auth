@@ -23,13 +23,11 @@ const admin = {
     if (authType === "Firebase") {
       try {
         decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
-        console.log(decodedToken.uid);
         const userSelected = await User.findOne({ _id: decodedToken.uid});
         if (!userSelected) return res.status(400).send("user not found");
         req._id = decodedToken.uid; // Define o _id no req com o UID do Firebase
         next();
       } catch (error) {
-        console.error("Erro ao verificar token do Firebase:", error);
         return res.status(403).json({ message: "Token do Firebase inválido" });
       }
     } else if (authType === "JWT") {
@@ -39,11 +37,9 @@ const admin = {
         req._id = decodedToken._id;
         next();
       } catch (error) {
-        console.error("Erro ao verificar token JWT:", error);
         return res.status(403).json({ message: "Token JWT inválido" });
       }
     } else {
-      console.log("erro aqui");
       return res.status(401).json({ message: "Tipo de autenticação inválido" });
     }
   },
@@ -60,9 +56,6 @@ const admin = {
       const fileName = `${userId}/${Date.now() + path.extname(file.originalname)}`;
       const fileUpload = bucket.file(fileName);
 
-      console.log(fileName);
-
-
       const stream = fileUpload.createWriteStream({
         metadata: {
           contentType: file.mimetype
@@ -70,7 +63,6 @@ const admin = {
       });
 
       stream.on("error", (error) => {
-        console.error("Erro ao fazer upload da imagem:", error);
         res.status(500).json({ success: false, message: "Erro ao fazer upload de imagem" });
       });
 
@@ -90,7 +82,6 @@ const admin = {
           await User.findByIdAndUpdate(userId, { profileImage: url });
           res.json({ success: true, message: "Upload de imagem realizado com sucesso" });
         } catch (updateError) {
-          console.error("Erro ao atualizar o perfil do usuário:", updateError);
           res.status(500).json({ success: false, message: "Erro ao atualizar o perfil do usuário" });
         }
 
@@ -98,7 +89,6 @@ const admin = {
 
       stream.end(file.buffer);
     } catch (err) {
-      console.error(err);
       res.status(500).json({ success: false, message: "Erro ao fazer upload de imagem" });
     }
   },

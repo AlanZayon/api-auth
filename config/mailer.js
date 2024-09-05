@@ -34,7 +34,6 @@ async function createTransporter() {
 
 		return transporter;
 	} catch (error) {
-		console.error("Error creating transporter:", error);
 		throw error; // Lançar o erro para que possa ser tratado por quem chamar a função
 	}
 }
