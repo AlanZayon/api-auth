@@ -79,7 +79,10 @@ const forgotPasswordFunctions = {
 		user.resetTokenExpiration = Date.now() + 3600000; // Token expires in 1 hour
 		await user.save();
 
-		const resetLink = `http://localhost:3000/user/LinkToVerifyToke?token=${tokenVerify}`;
+		const protocol = req.protocol; 
+		const host = req.get('host'); 
+
+		const resetLink = `${protocol}://${host}/user/LinkToVerifyToke?token=${tokenVerify}`;
 		const mailOptions = {
 			from: process.env.EMAIL_USER,
 			to: email,
@@ -117,7 +120,7 @@ const forgotPasswordFunctions = {
 			userSelected.verified = true;
 			await userSelected.save();
 
-			res.redirect("/user/emailVerified");
+			res.redirect("http://localhost:5173");
 
 		} catch (error) {
 			console.error("Erro ao marcar email como verificado:", error);
