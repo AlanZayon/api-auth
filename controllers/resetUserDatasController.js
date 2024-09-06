@@ -43,44 +43,55 @@ const forgotPasswordFunctions = {
 		res.send("Password reset email sent");
 	},
 	sendEmailToVerify: async (req, res) => {
-		const email = req.body.email;
-		const uid = req.body.uid;
-		const oldEmail = req.body.oldEmail;
-
-		if (oldEmail) {
-			const userRecord = await admin.auth().getUserByEmail(oldEmail);
-			const oldUid = userRecord.uid;
-			// Deletar o usuário pelo UID
-			await admin.auth().deleteUser(oldUid);
+		try {
+			const { email, uid, oldEmail } = req.body;
+	
+			// Se houver oldEmail, busque o usuário e delete pelo UID
+			if (oldEmail) {
+				const userRecord = await admin.auth().getUserByEmail(oldEmail);
+				await admin.auth().deleteUser(userRecord.uid);
+			}
+	
+			// Verifique se o usuário existe no banco de dados
+			const user = await User.findOne({ email });
+			if (!user) {
+				return res.status(404).send("User not found");
+			}
+	
+			// Atualize o email e verifique a conta
+			await Promise.all([
+				admin.auth().updateUser(uid, { email }),
+				admin.auth().updateUser(uid, { emailVerified: true })
+			]);
+	
+			// Gere o token de verificação
+			const tokenVerify = crypto.randomBytes(20).toString("hex");
+			user.tokenVerify = tokenVerify;
+			user.resetTokenExpiration = Date.now() + 3600000; // Token expira em 1 hora
+			await user.save();
+	
+			// Gerar o link de verificação
+			const protocol = req.protocol;
+			const host = req.get('host');
+			const resetLink = `${protocol}://${host}/user/LinkToVerifyToken?token=${tokenVerify}`;
+	
+			// Configurar e enviar o email
+			const mailOptions = {
+				from: process.env.EMAIL_USER,
+				to: email,
+				subject: "Verify your account",
+				html: `Here is your link to verify your account: <a href="${resetLink}">${resetLink}</a>`
+			};
+	
+			// Enviar o email
+			await mailer.sendMail(mailOptions);
+	
+			// Enviar resposta ao cliente
+			res.send("Verification email sent");
+		} catch (error) {
+			console.error("Error in sendEmailToVerify:", error);
+			res.status(500).send("Internal server error");
 		}
-
-		const user = await User.findOne({ email });
-		if (!user) {
-			return res.status(404).send("User not found");
-		}
-		admin.auth().updateUser(uid, { email })
-
-		await admin.auth().updateUser(uid, { emailVerified: true });
-
-		const tokenVerify = crypto.randomBytes(20).toString("hex");
-		user.tokenVerify = tokenVerify;
-		user.resetTokenExpiration = Date.now() + 3600000; // Token expires in 1 hour
-		await user.save();
-
-		const protocol = req.protocol; 
-		const host = req.get('host'); 
-
-		const resetLink = `${protocol}://${host}/user/LinkToVerifyToke?token=${tokenVerify}`;
-		const mailOptions = {
-			from: process.env.EMAIL_USER,
-			to: email,
-			subject: "verify your account",
-			html: `here your link to verify tour account ${resetLink}`
-		};
-
-		mailer.sendMail(mailOptions);
-
-		res.send("Password reset email sent");
 	},
 	verifyToken: async (req, res) => {
 
