@@ -16,7 +16,7 @@ router.get("/verifyPage", userController.pageVerify);
 
 router.get("/emailVerified", userController.emailVerified);
 
-router.get("/LinkToVerifyToke",resetUserDatasController.verifyToken);
+router.get("/LinkToVerifyToken",resetUserDatasController.verifyToken);
 
 router.get("/reset-password-page", userController.resetPasswordPage);
 
