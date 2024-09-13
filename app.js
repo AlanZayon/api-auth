@@ -41,7 +41,7 @@ const app = express();
 app.use(cors({
 	origin: ['http://localhost:5173', 'https://site-kong.netlify.app'], 
 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-	allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-type'], 
+	allowedHeaders: ['Content-Type', 'X-Firebase-Token', 'X-JWT-Token'], 
 	exposedHeaders: ['Authorization-token']
   }));
 
