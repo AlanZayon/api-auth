@@ -7,41 +7,35 @@ const firebaseAdmin = require("firebase-admin");
 
 const admin = {
   verificarToken: async function (req, res, next) {
-    const authHeader = req.headers["authorization"];
-    const authType = req.headers["x-auth-type"]; // Header customizado para identificar o tipo de autenticação
+    const firebaseToken = req.headers["x-firebase-token"]; 
+    const jwtToken = req.headers["x-jwt-token"];  
     
-    if (!authHeader || !authType) {
-      return res.status(401).json({ message: "Token ou tipo de autenticação não fornecido" });
+    if (!firebaseToken || !jwtToken) {
+      return res.status(401).json({ message: "Tokens não fornecidos" });
     }
   
-    // Remove o prefixo "Bearer " do token
-    const token = authHeader.split(" ")[1];
+    let firebaseDecodedToken, jwtDecodedToken;
   
-    let decodedToken;
-    
-    // Verifica o tipo de autenticação
-    if (authType === "Firebase") {
-      try {
-        decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
-        const userSelected = await User.findOne({ _id: decodedToken.uid});
-        if (!userSelected) return res.status(400).send("user not found");
-        req._id = decodedToken.uid; // Define o _id no req com o UID do Firebase
-        next();
-      } catch (error) {
-        return res.status(403).json({ message: "Token do Firebase inválido" });
-      }
-    } else if (authType === "JWT") {
-      try {
-        if (blacklist.has(token)) return res.sendStatus(403); // Token inválido
-        decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
-        req._id = decodedToken._id;
-        next();
-      } catch (error) {
-        return res.status(403).json({ message: "Token JWT inválido" });
-      }
-    } else {
-      return res.status(401).json({ message: "Tipo de autenticação inválido" });
+    // Verifica o token do Firebase
+    try {
+      firebaseDecodedToken = await firebaseAdmin.auth().verifyIdToken(firebaseToken);
+      const userSelected = await User.findOne({ _id: firebaseDecodedToken.uid });
+      if (!userSelected) return res.status(400).send("User not found");
+    } catch (error) {
+      return res.status(403).json({ message: "Token do Firebase inválido" });
     }
+  
+    // Verifica o token JWT
+    try {
+      if (blacklist.has(jwtToken)) return res.sendStatus(403); // Token inválido
+      jwtDecodedToken = jwt.verify(jwtToken, process.env.TOKEN_SECRET);
+    } catch (error) {
+      return res.status(403).json({ message: "Token JWT inválido" });
+    }
+  
+    // Se ambos os tokens forem válidos, prossiga
+    req._id = firebaseDecodedToken.uid;  // UID do Firebase será usado no request
+    next();
   },
   uploadImage: async function (req, res, bucket) {
     try {
