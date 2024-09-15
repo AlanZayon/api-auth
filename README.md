@@ -85,16 +85,18 @@ A URL base da API é: https://api-auth-fg73.vercel.app/
   "firebaseToken": "tokenFirebasePersonalizadoAqui"
 }
 ```
+```css
 Authorization-token: Bearer {jwtTokenAqui}
-
+```
 ### 1. Verificação de Token
 
 - **URL:** `/admin`
 - **Método:** `GET`
 - **Descrição:**Verifica se o token JWT ou Firebase é válido.
-
-Authorization: Bearer {token}
-
+```css
+"Authorization": `Bearer ${token}`,
+"X-Auth-Type": "JWT" ou "Firebase"
+```
 #### Request:
 - Resposta com status 200
 ```json
