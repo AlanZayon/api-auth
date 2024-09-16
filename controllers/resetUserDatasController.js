@@ -113,7 +113,7 @@ const forgotPasswordFunctions = {
 			userSelected.verified = true;
 			await userSelected.save();
 
-			res.redirect("http://localhost:5173");
+			res.redirect("https://site-kong.netlify.app/");
 
 		} catch (error) {
 			res.status(500).send("User not exist or token invalid.");
