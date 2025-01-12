@@ -149,7 +149,7 @@ Authorization-token: Bearer {jwtTokenAqui}
 
 2. **Instale as dependências:**:
    ```bash
-   git clone https://github.com/AlanZayon/api-auth.git
+   npm install
    ```
    
 3. **Crie um arquivo .env com as seguintes variáveis:**:
