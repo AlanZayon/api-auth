@@ -116,6 +116,7 @@ const forgotPasswordFunctions = {
 			if (isVerificationToken) {
 				const uid = userSelected._id.toString();
 				await admin.auth().updateUser(uid, { emailVerified: true });
+				userSelected.verified = true;
 			}
 
 			// Limpar os tokens após o uso
