@@ -47,7 +47,7 @@ const forgotPasswordFunctions = {
 	},
 	sendEmailToVerify: async (req, res) => {
 		try {
-			const { email, uid, oldEmail } = req.body;
+			const { email, uid, oldEmail, customClaims } = req.body;
 
 			// Se houver oldEmail, busque o usuário e delete pelo UID
 			if (oldEmail) {
@@ -66,6 +66,11 @@ const forgotPasswordFunctions = {
 				admin.auth().updateUser(uid, { email }),
 				admin.auth().updateUser(uid, { emailVerified: true })
 			]);
+
+			if (customClaims) {
+				await admin.auth().setCustomUserClaims(uid, customClaims);
+			}
+
 
 			// Gere o token de verificação
 			const tokenVerify = crypto.randomBytes(20).toString("hex");
@@ -116,10 +121,10 @@ const forgotPasswordFunctions = {
 			if (isVerificationToken) {
 				const uid = userSelected._id.toString();
 				await admin.auth().updateUser(uid, { emailVerified: true });
+				userSelected.verified = true;
 			}
 
 			// Limpar os tokens após o uso
-			userSelected.resetToken = undefined;
 			userSelected.tokenVerify = undefined;
 			await userSelected.save();
 
@@ -127,7 +132,7 @@ const forgotPasswordFunctions = {
 			if (isVerificationToken) {
 				res.redirect("https://site-kong.netlify.app");
 			} else {
-				res.redirect("http://localhost:5173/forget-password?step=3");
+				res.redirect("http://localhost:5173/forget-password?step=3&token=" + token);
 			}
 		} catch (error) {
 			res.status(500).send("User not exist or token invalid.");
@@ -137,16 +142,23 @@ const forgotPasswordFunctions = {
 		const { error } = validate.tokenValidates(req.body);
 
 		if (error) {
+			console.log("error", error);
+
 			return res.status(400).send(error.message);
 		}
 
 		const user = await User.findOne({ resetToken: req.body.resetToken, resetTokenExpiration: { $gt: Date.now() } });
 		if (!user) {
+			console.log("Invalid or expired token");
+
 			return res.status(400).send("Invalid or expired token");
 		}
 
 		const newPasswordMatch = bcrypt.compareSync(req.body.newPassword, user.password);
-		if (newPasswordMatch) return res.status(400).send("This password is already being used by you");
+		if (newPasswordMatch) {
+			console.log("This password is already being used by you");
+			return res.status(400).send("This password is already being used by you");
+		}
 
 		const passwordStrength = owasp.test(req.body.newPassword);
 		if (!passwordStrength.strong) {
@@ -172,7 +184,7 @@ const forgotPasswordFunctions = {
 		const userSelected = await User.findOne({ username: req.body.username });
 
 		if (userSelected) {
-			return res.status(400).send("Username ja existe");
+			return res.status(400).send("Username already exist");
 		}
 
 
@@ -209,12 +221,26 @@ const forgotPasswordFunctions = {
 	},
 	sendCodeToNewEmail: async (req, res) => {
 		const newEmail = req.body.newEmail;
+
+		if (!newEmail) {
+			return res.status(400).send("New email is required");
+		}
+
+		const email = await User.findOne({ email: newEmail });
+
+		if (email) {
+			return res.status(400).send("Email already exist");
+		}
+
 		const userId = req._id;
 		const user = await User.findOne({ _id: userId });
 		if (!user) {
-			return res.status(404).send("User not found");
+			return res.status(400).send("User not found");
 		}
 
+		if (newEmail === user.email) {
+			return res.status(400).send("The new email is the same as the current email");
+		}
 		const changeEmailCode = generateEmailCode();
 		user.newEmail = req.body.newEmail;
 		user.codeToChageEmail = changeEmailCode;
@@ -237,11 +263,11 @@ const forgotPasswordFunctions = {
 		const userId = req._id;
 		const user = await User.findOne({ _id: userId });
 		if (!user) {
-			return res.status(404).send("User not found");
+			return res.status(400).send("User not found");
 		}
 
 		if (user.codeToChageEmail !== code) {
-			return res.status(401).send("Códigos de verificação inválidos");
+			return res.status(400).send("invalid code");
 		}
 		user.email = user.newEmail;
 		user.newEmail = null;

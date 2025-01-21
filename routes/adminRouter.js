@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const admin = require("firebase-admin");
 const auth = require("../controllers/adminController");
 const User = require("../models/Models");
 const upload = require("../config/multerConfig");
@@ -22,10 +23,11 @@ module.exports = (bucket) => {
 	router.get("/user", auth.verificarToken, async (req, res) => {
 		try {
 			const user = await User.findById(req._id);
+			const firebaseToken = await admin.auth().createCustomToken(req._id.toString());
 			if (!user) {
 				return res.status(404).send("Usuário não encontrado");
 			}
-			res.json(user);
+			res.json({user: user, firebaseToken: firebaseToken});
 		} catch (err) {
 			res.status(500).send("Erro ao buscar usuário");
 		}

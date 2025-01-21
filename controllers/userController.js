@@ -65,7 +65,7 @@ const userController = {
 
             return res.status(400).json({ errors });
         }
-        
+
         const passwordStrength = owasp.test(req.body.password);
         if (!passwordStrength.strong) {
             const reasons = passwordStrength.errors.join(", ");
@@ -131,7 +131,11 @@ const userController = {
 
         const firebaseToken = await admin.auth().createCustomToken(userSelected._id.toString());
 
-        res.header("Authorization-token", `Bearer ${token}`).send({ message: "logged", verifyStatus: userSelected.verified, firebaseToken: firebaseToken });
+        res.header("Authorization-token", `Bearer ${token}`).send({
+            message: "logged",
+            verifyStatus: userSelected.verified,
+            firebaseToken: firebaseToken
+        });
 
     },
     loginWithFirebase: async (req, res) => {
