@@ -28,6 +28,7 @@ const admin = {
         req._id = decodedToken.uid; // Define o _id no req com o UID do Firebase
         next();
       } catch (error) {
+        console.log(error);
         return res.status(403).json({ message: "Token do Firebase inválido" });
       }
     } else if (authType === "JWT") {
@@ -37,6 +38,7 @@ const admin = {
         req._id = decodedToken._id;
         next();
       } catch (error) {
+        console.log(error);
         return res.status(403).json({ message: "Token JWT inválido" });
       }
     } else {

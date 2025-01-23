@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const validate = require("../config/valdiates");
 const owasp = require("owasp-password-strength-test");
+const { enable2FA } = require("./2AFController");
 
 
 const blacklist = new Set();
@@ -134,7 +135,8 @@ const userController = {
         res.header("Authorization-token", `Bearer ${token}`).send({
             message: "logged",
             verifyStatus: userSelected.verified,
-            firebaseToken: firebaseToken
+            firebaseToken: firebaseToken,
+            enable2FA: userSelected.enabled
         });
 
     },
@@ -142,16 +144,29 @@ const userController = {
         const userId = req._id;
         const user = await User.findOne({ _id: userId });
         if (user) {
-            res.json({ userExists: true, verifyStatus: user.verified });
+            res.json({ userExists: true, verifyStatus: user.verified, enable2FA: user.enabled });
         } else {
             res.json({ userExists: false });
         }
     },
-    logout: async function (req, res) {
+    logout: async (req, res) => {
         const { token } = req.body;
-        // Adicionar o token à lista negra
-        blacklist.add(token);
-        res.send("Logout realizado com sucesso.");
+        const userId = req._id;
+        try {
+            await User.findOneAndUpdate(
+                { _id: userId },
+                {
+                    isValid: false
+                },
+                { new: true, upsert: true }
+            );
+            // Adicionar o token à lista negra
+            blacklist.add(token);
+            res.send("Logout realizado com sucesso.");
+        } catch (error) {
+            console.log(error);
+        }
+
     }
 };
 

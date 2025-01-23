@@ -32,7 +32,7 @@ router.post("/register", userController.register);
 
 router.post("/login", userController.login);
 
-router.post("/logout", userController.logout);
+router.post("/logout",auth.verificarToken, userController.logout);
 
 router.post("/forgot-password", resetUserDatasController.sendEmail);
 

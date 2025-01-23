@@ -38,6 +38,9 @@ const userSchema = mongoose.Schema({
 	resetTokenExpiration: { type: Date },
 	codeToChageEmail: { type: String },
 	newEmail: { type: String },
+	secret: { type: String },
+	enabled: { type: Boolean, default: false },
+	isValid: { type: Boolean, default: false }
 });
 
 module.exports = mongoose.model("User", userSchema);

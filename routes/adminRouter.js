@@ -5,10 +5,11 @@ const auth = require("../controllers/adminController");
 const User = require("../models/Models");
 const upload = require("../config/multerConfig");
 const resetUserDatasController = require("../controllers/resetUserDatasController");
+const AF2Controller = require("../controllers/2AFController");
 
 
 module.exports = (bucket) => {
-	router.get("/", auth.verificarToken,async (req, res) => {
+	router.get("/", auth.verificarToken, async (req, res) => {
 		try {
 			const user = await User.findById(req._id);
 			if (!user) {
@@ -19,7 +20,7 @@ module.exports = (bucket) => {
 			res.status(500).send("Erro ao buscar usuário");
 		}
 	});
-	
+
 	router.get("/user", auth.verificarToken, async (req, res) => {
 		try {
 			const user = await User.findById(req._id);
@@ -27,21 +28,27 @@ module.exports = (bucket) => {
 			if (!user) {
 				return res.status(404).send("Usuário não encontrado");
 			}
-			res.json({user: user, firebaseToken: firebaseToken});
+			res.json({ user: user, firebaseToken: firebaseToken });
 		} catch (err) {
 			res.status(500).send("Erro ao buscar usuário");
 		}
 	});
-	
-	router.post("/upload",auth.verificarToken,upload.single("profileImage"),(req,res) => auth.uploadImage(req,res,bucket));
 
-	router.post("/resetUsername",auth.verificarToken,resetUserDatasController.resetUsername);
+	router.post("/upload", auth.verificarToken, upload.single("profileImage"), (req, res) => auth.uploadImage(req, res, bucket));
 
-	router.post("/resetPassword",auth.verificarToken,resetUserDatasController.changePassword);
+	router.post("/resetUsername", auth.verificarToken, resetUserDatasController.resetUsername);
 
-	router.put("/code", auth.verificarToken,resetUserDatasController.sendCodeToNewEmail);
+	router.post("/resetPassword", auth.verificarToken, resetUserDatasController.changePassword);
 
-	router.put("/verificationCode", auth.verificarToken,resetUserDatasController.updateEmail);
+	router.put("/code", auth.verificarToken, resetUserDatasController.sendCodeToNewEmail);
+
+	router.put("/verificationCode", auth.verificarToken, resetUserDatasController.updateEmail);
+
+	router.post('/enable-2fa', auth.verificarToken, AF2Controller.enable2FA);
+
+	router.post('/disable-2fa', auth.verificarToken, AF2Controller.disable2FA);
+
+	router.post('/verify-2fa', auth.verificarToken, AF2Controller.verify2FA);
 
 
 
