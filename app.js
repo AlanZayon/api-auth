@@ -1,4 +1,7 @@
 const express = require("express");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const compression = require("compression");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "./.env") });
 const cors = require("cors");
@@ -38,12 +41,23 @@ const bucket = admin.storage().bucket();
 
 const app = express();
 
+app.use(helmet());
+
 app.use(cors({
 	origin: ['http://localhost:5173', 'https://site-kong.netlify.app'], 
 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 	allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-type'], 
 	exposedHeaders: ['Authorization-token']
   }));
+
+
+app.use(compression());
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutos
+	max: 100, // 100 requisições por IP
+  });
+  app.use(limiter);
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
