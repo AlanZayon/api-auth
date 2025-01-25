@@ -41,28 +41,27 @@ const bucket = admin.storage().bucket();
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.use(helmet());
 
 app.use(cors({
-	origin: ['http://localhost:5173', 'https://site-kong.netlify.app'], 
+	origin: ['http://localhost:5173', 'https://site-kong.netlify.app'],
 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-	allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-type'], 
+	allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-type'],
 	exposedHeaders: ['Authorization-token']
-  }));
+}));
 
 
 app.use(compression());
 const limiter = rateLimit({
 	windowMs: 15 * 60 * 1000, // 15 minutos
 	max: 100, // 100 requisições por IP
-  });
-  app.use(limiter);
+});
+app.use(limiter);
 
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "../public")));
-app.set("views", path.join(__dirname, "../public/views"));
-app.set("view engine", "ejs");
 app.use(express.json());
 app.use("/user", userRouter);
 app.use("/admin", adminRouter(bucket));
