@@ -3,7 +3,7 @@
 Este é o backend de um sistema de autorização, que permite login, registro e autenticação de usuários atravé do e-mail/senha. A API é construída com Node.js, Express e MongoDB.
 
 ## Base URL
-A URL base da API é: https://api-auth-fg73.vercel.app/
+A URL base da API é: [https://api-auth-85xc.onrender.com](https://api-auth-85xc.onrender.com)
 
 
 ## Endpoints
