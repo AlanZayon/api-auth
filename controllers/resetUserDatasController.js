@@ -132,7 +132,7 @@ const forgotPasswordFunctions = {
 			if (isVerificationToken) {
 				res.redirect("https://site-kong.netlify.app");
 			} else {
-				res.redirect("http://localhost:5173/forget-password?step=3&token=" + token);
+				res.redirect("https://site-kong.netlify.app/forget-password?step=3&token=" + token);
 			}
 		} catch (error) {
 			res.status(500).send("User not exist or token invalid.");
