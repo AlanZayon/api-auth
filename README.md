@@ -1,183 +1,194 @@
-# API de Autorização
+# Authorization API
 
-Este é o backend de um sistema de autorização, que permite login, registro e autenticação de usuários atravé do e-mail/senha. A API é construída com Node.js, Express e MongoDB.
+This is the backend for an authorization system that enables user login, registration, and authentication via email/password. The API is built with Node.js, Express, and MongoDB.
 
 ## Base URL
-A URL base da API é: [https://api-auth-85xc.onrender.com](https://api-auth-85xc.onrender.com)
+The API base URL is: [https://api-auth-85xc.onrender.com](https://api-auth-85xc.onrender.com)
 
 
 ## Endpoints
 
-### 1. Registro de Usuário
+### 1. User Registration
 
 - **URL:** `/user/register`
-- **Método:** `POST`
-- **Descrição:** Registra um novo usuário.
+- **Method:** `POST`
+- **Description:** Registers a new user.
   
 #### Request:
 ```json
 {
-  "username": "exemploUser",
-  "email": "usuario@exemplo.com",
-  "confirmEmail": "usuario@exemplo.com",
-  "password": "senha123",
-  "confirmPassword": "senha123",
+  "username": "exampleUser",
+  "email": "user@example.com",
+  "confirmEmail": "user@example.com",
+  "password": "password123",
+  "confirmPassword": "password123",
   "dateOfBirth": "1990-01-01"
 }
 ```
-- Resposta com status 400
+- Response with status 400:
 ```json
 {
   "errors": [
     "E-mail already exists",
     "Username already exists",
-    "E-mail and Username already exists",
-    "Validation errors (se aplicável)"
+    "E-mail and Username already exist",
+    "Validation errors (if applicable)"
   ]
 }
 
 {
-  "error": "Password does not meet the OWASP password strength requirements. Reasons: [lista dos motivos]"
+  "error": "Password does not meet the OWASP password strength requirements. Reasons: [list of reasons]"
 }
 
 {
-  "error": "Mensagem do erro ocorrido"
+  "error": "Error message"
 }
+
 ```
-- Resposta com status 200
+- Response with status 200:
 ```json
 {
-  "firebaseToken": "tokenFirebasePersonalizadoAqui",
-  "oldUserEmail": "newEmailAqui"
+  "firebaseToken": "customFirebaseTokenHere",
+  "oldUserEmail": "updatedEmailHere"
 }
+
 ```
 
-### 1. Login de Usuario
+### 1. User Login
 
 - **URL:** `/user/login`
-- **Método:** `POST`
-- **Descrição:**Realiza login com e-mail e senha.
+- **Method:** `POST`
+- **Description: Logs in using email and password.
 
 #### Request:
 ```json
 
 {
-  "email": "usuario@exemplo.com",
-  "password": "senha123"
+  "email": "user@example.com",
+  "password": "password123"
 }
+
 ```
 
-- Resposta com status 400
+- Response with status 400:
 ```json
 {
-  "error": "Mensagem de erro específica da validação"
+  "error": "Specific validation error message"
 }
 
 {
   "error": "email or password incorrect"
 }
+
 ```
-- Resposta com status 200
+- Response with status 200:
 ```json
 {
   "message": "logged",
   "verifyStatus": true/false, 
-  "firebaseToken": "tokenFirebasePersonalizadoAqui"
+  "firebaseToken": "customFirebaseTokenHere"
 }
+
 ```
 ```css
-Authorization-token: Bearer {jwtTokenAqui}
+Authorization-token: Bearer {jwtTokenHere}
 ```
-### 1. Verificação de Token
+### 1. Token Verification
 
 - **URL:** `/admin`
-- **Método:** `GET`
-- **Descrição:**Verifica se o token JWT ou Firebase é válido.
+- **Method:** `GET`
+- **Description:**Verifies if the JWT or Firebase token is valid.
 ```css
 "Authorization": `Bearer ${token}`,
-"X-Auth-Type": "JWT" ou "Firebase"
+"X-Auth-Type": "JWT" or "Firebase"
+
 ```
 #### Request:
-- Resposta com status 200
+- Response with status 200:
 ```json
 {
-  "_id": "id_do_usuario",
-  "username": "exemploUser",
-  "email": "usuario@exemplo.com",
+  "_id": "user_id",
+  "username": "exampleUser",
+  "email": "user@example.com",
   "dateOfBirth": "1990-01-01T00:00:00.000Z"
-  // Outros campos do usuário
+  // Other user fields
 }
+
 ```
-- Resposta com status 404
+- Response with status 404:
 
 ```json
 {
-  "error": "Usuário não encontrado"
+  "error": "User not found"
 }
+
 ```
-- Resposta com status 500
+- Response with status 500:
 
 ```json
 {
-  "error": "Erro ao buscar usuário"
+  "error": "Error retrieving user"
 }
+
 ```
 
-- Resposta com status 500
+- Response with status 500:
 
 ```json
 {
   "error": "Unauthorized"
 }
+
 ```
 
-## Tecnologias Utilizadas
+## Technologies Used
 - Node.js
 - Express
 - MongoDB
-- JWT para autenticação
+- JWT for authentication
 
-  ## Instalação
+  ## Installation
 
-### Para rodar localmente:
+### To run locally:
 
-1. **Clone o repositório**:
+1. **Clone the repository:**:
 
    ```bash
    git clone https://github.com/AlanZayon/api-auth.git
    ```
 
-2. **Instale as dependências:**:
+2. **Install dependencies:**:
    ```bash
    npm install
    ```
    
-3. **Crie um arquivo .env com as seguintes variáveis:**:
+3. **Create a .env file with the following variables:**:
    ```env
-    PORT=3000
-    MONGO_CONNECTION_URL='mongodb+srv://seu-usuario:sua-senha@cluster0.mongodb.net/test?retryWrites=true&w=majority'
-    EMAIL_USER='seu-email@gmail.com'
-    EMAIL_PASSWORD='sua-senha-de-email'
-    TOKEN_SECRET='seu-token-secreto'
-    OAUTH_CLIENT_ID='seu-oauth-client-id'
-    OAUTH_CLIENT_SECRET='seu-oauth-client-secret'
-    OAUTH_REDIRECT_URL='sua-url-de-redirect'
-    OAUTH_REFRESH_TOKEN='seu-refresh-token'
-    STORAGE_BUCKET='seu-storage-bucket'
-    FIREBASE_TYPE='service_account'
-    FIREBASE_PROJECT_ID='seu-firebase-project-id'
-    FIREBASE_PRIVATE_KEY_ID='sua-firebase-private-key-id'
-    FIREBASE_PRIVATE_KEY='-----BEGIN PRIVATE KEY-----\n...-----END PRIVATE KEY-----\n'
-    FIREBASE_CLIENT_EMAIL='seu-client-email'
-    FIREBASE_CLIENT_ID='seu-client-id'
-    FIREBASE_AUTH_URI='https://accounts.google.com/o/oauth2/auth'
-    FIREBASE_TOKEN_URI='https://oauth2.googleapis.com/token'
-    FIREBASE_AUTH_PROVIDER_X509_CERT_URL='https://www.googleapis.com/oauth2/v1/certs'
-    FIREBASE_CLIENT_X509_CERT_URL='https://www.googleapis.com/robot/v1/metadata/x509/...'
+   PORT=3000
+   MONGO_CONNECTION_URL='mongodb+srv://your-username:your-password@cluster0.mongodb.net/test?retryWrites=true&w=majority'
+   EMAIL_USER='your-email@gmail.com'
+   EMAIL_PASSWORD='your-email-password'
+   TOKEN_SECRET='your-secret-token'
+   OAUTH_CLIENT_ID='your-oauth-client-id'
+   OAUTH_CLIENT_SECRET='your-oauth-client-secret'
+   OAUTH_REDIRECT_URL='your-redirect-url'
+   OAUTH_REFRESH_TOKEN='your-refresh-token'
+   STORAGE_BUCKET='your-storage-bucket'
+   FIREBASE_TYPE='service_account'
+   FIREBASE_PROJECT_ID='your-firebase-project-id'
+   FIREBASE_PRIVATE_KEY_ID='your-firebase-private-key-id'
+   FIREBASE_PRIVATE_KEY='-----BEGIN PRIVATE KEY-----\n...-----END PRIVATE KEY-----\n'
+   FIREBASE_CLIENT_EMAIL='your-client-email'
+   FIREBASE_CLIENT_ID='your-client-id'
+   FIREBASE_AUTH_URI='https://accounts.google.com/o/oauth2/auth'
+   FIREBASE_TOKEN_URI='https://oauth2.googleapis.com/token'
+   FIREBASE_AUTH_PROVIDER_X509_CERT_URL='https://www.googleapis.com/oauth2/v1/certs'
+   FIREBASE_CLIENT_X509_CERT_URL='https://www.googleapis.com/robot/v1/metadata/x509/...'
+
    ```
    
-4. **Rode o servidor:**:
+4. **Start the server:**:
    ```bash
-    npm start_server
+    npm run start
    ```
-   A API estará disponível em http://localhost:3000.
+   The API will be available at http://localhost:3000.
