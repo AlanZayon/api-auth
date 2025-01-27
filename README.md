@@ -12,7 +12,7 @@ The API base URL is: [https://api-auth-85xc.onrender.com](https://api-auth-85xc.
 
 - **URL:** `/user/register`
 - **Method:** `POST`
-- **Description:** Registers a new user.
+- **Description:** `Registers a new user.`
   
 #### Request:
 ```json
@@ -54,11 +54,11 @@ The API base URL is: [https://api-auth-85xc.onrender.com](https://api-auth-85xc.
 
 ```
 
-### 1. User Login
+### 2. User Login
 
 - **URL:** `/user/login`
 - **Method:** `POST`
-- **Description: Logs in using email and password.
+- **Description:**  `Logs in using email and password.`
 
 #### Request:
 ```json
@@ -93,11 +93,12 @@ The API base URL is: [https://api-auth-85xc.onrender.com](https://api-auth-85xc.
 ```css
 Authorization-token: Bearer {jwtTokenHere}
 ```
-### 1. Token Verification
+### 3. Token Verification
 
 - **URL:** `/admin`
 - **Method:** `GET`
-- **Description:**Verifies if the JWT or Firebase token is valid.
+- **Description:** `Verifies if the JWT or Firebase token is valid.`
+- Request Headers:
 ```css
 "Authorization": `Bearer ${token}`,
 "X-Auth-Type": "JWT" or "Firebase"
@@ -141,6 +142,69 @@ Authorization-token: Bearer {jwtTokenHere}
 
 ```
 
+### 4. Login with Firebase
+
+- **URL:** `user/check-firebase-user`
+- **Method:** `GET`
+- **Description:** `Checks if the user exists in the database and retrieves the user's verification status and 2FA status.`
+- Request Headers:
+```css
+"Authorization": `Bearer ${token}`,
+"X-Auth-Type": "Firebase"
+
+```
+#### Request:
+- 200 OK (User exists):
+```json
+{
+  "userExists": true,
+  "verifyStatus": true,
+  "enable2FA": false
+}
+
+
+```
+- 200 OK (User does not exist):
+
+```json
+{
+  "userExists": false
+}
+```
+
+### 5. Logout
+
+- **URL:** `user/logout`
+- **Method:** `POST`
+- **Description:** `Logs out the user by invalidating the token and adding it to the blacklist.`
+- Request Headers:
+```css
+"Authorization": `Bearer ${token}`,
+"X-Auth-Type": "JWT" or "Firebase"
+
+```
+#### Request:
+```json
+{
+  "token": "<jwt-or-firebase-token>"
+}
+
+```
+- 200 OK:
+```json
+{
+  "message": "Successfully logged out."
+}
+
+```
+- 500 Internal Server Error (In case of an unexpected error):
+
+```json
+{
+  "error": "An error occurred while logging out."
+}
+```
+
 ## Technologies Used
 - Node.js
 - Express
@@ -162,7 +226,9 @@ Authorization-token: Bearer {jwtTokenHere}
    npm install
    ```
    
-3. **Create a .env file with the following variables:**:
+3. **Create a .env file with the following variables**:
+
+ Do not share your .env file or its contents.
    ```env
    PORT=3000
    MONGO_CONNECTION_URL='mongodb+srv://your-username:your-password@cluster0.mongodb.net/test?retryWrites=true&w=majority'
@@ -184,10 +250,11 @@ Authorization-token: Bearer {jwtTokenHere}
    FIREBASE_TOKEN_URI='https://oauth2.googleapis.com/token'
    FIREBASE_AUTH_PROVIDER_X509_CERT_URL='https://www.googleapis.com/oauth2/v1/certs'
    FIREBASE_CLIENT_X509_CERT_URL='https://www.googleapis.com/robot/v1/metadata/x509/...'
+   VERIFY_URL_REDIRECT="<your-front-end-url>"
 
    ```
    
-4. **Start the server:**:
+5. **Start the server:**:
    ```bash
     npm run start
    ```
