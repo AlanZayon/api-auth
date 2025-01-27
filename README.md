@@ -3,7 +3,7 @@
 This is the backend for an authorization system that enables user login, registration, and authentication via email/password. The API is built with Node.js, Express, and MongoDB.
 
 ## Base URL
-The API base URL is: [https://api-auth-85xc.onrender.com](https://api-auth-85xc.onrender.com)
+The API base URL is: [https://api-auth-6u2s.onrender.com](https://api-auth-6u2s.onrender.com)
 
 
 ## Endpoints
