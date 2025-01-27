@@ -205,6 +205,83 @@ Authorization-token: Bearer {jwtTokenHere}
 }
 ```
 
+### 6. Send Verification Email
+
+- **URL:** `user/SendEmailToVerify`
+- **Method:** `POST`
+- **Description:** `Sends a verification email to the user with a link to verify their account.`
+
+#### Request:
+```json
+{
+  "email": "user@example.com",
+  "uid": "user-uid-here",
+  "oldEmail": "old-email@example.com", 
+  "customClaims": { "alreadyLinked": "claimValue" }
+}
+
+```
+- **email:** The email to send the verification link to.
+- **uid:** The Firebase user ID associated with the user.
+- **oldEmail:** (Optional) To ensure that the new email is registered in Firebase, which comes from the link to the Google account, I change the email to a random one to ensure that I can register this email.
+- **customClaims:** (Optional) Custom claims to set for the user.
+- 200 OK:
+```json
+{
+  "message": "Verification email sent"
+}
+
+```
+- 500 Internal Server Error:
+
+```json
+{
+  "error": "Internal server error"
+}
+
+```
+
+### 7. Verify Token
+
+- **URL:** `user/LinkToVerifyToken`
+- **Method:** `POST`
+- **Description:** `Verifies the token sent via email and activates the user's account if the token is valid`
+
+#### Request:
+- Query Parameters:
+```json
+{
+token=<verification-token>
+}
+
+```
+- 200 OK (Verification successful):
+```json
+{
+  "message": "Account verified successfully"
+}
+
+```
+- 400 Bad Request (Invalid token or user does not exist):
+
+```json
+{
+  "error": "User does not exist or token invalid"
+}
+
+```
+
+- 500 Internal Server Error:
+
+```json
+{
+  "error": "Internal server error"
+}
+```
+#### Redirect Behavior:
+- If the token is valid and verification is successful, the user will be redirected to the URL specified in the VERIFY_URL_REDIRECT environment variable.
+- If the token is related to a password reset process, the user will be redirected to the password reset page.
+
 ## Technologies Used
 - Node.js
 - Express
