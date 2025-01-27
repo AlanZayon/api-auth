@@ -278,9 +278,105 @@ token=<verification-token>
   "error": "Internal server error"
 }
 ```
+
 #### Redirect Behavior:
 - If the token is valid and verification is successful, the user will be redirected to the URL specified in the VERIFY_URL_REDIRECT environment variable.
 - If the token is related to a password reset process, the user will be redirected to the password reset page.
+
+### 8. Send Password Reset Email
+
+- **URL:** `user/forgot-password`
+- **Method:** `POST`
+- **Description:** `Sends a password reset email with a token that allows the user to reset their password.`
+
+#### Request:
+- Request Body:
+```json
+{
+  "email": "user@example.com"
+}
+
+```
+- 200 OK:
+```json
+{
+  "message": "Password reset email sent"
+}
+
+```
+- 404 Not Found:
+
+```json
+{
+  "error": "User not found"
+}
+```
+
+- 500 Internal Server Error:
+
+```json
+{
+  "error": "Internal server error"
+}
+```
+#### Redirect Behavior:
+- If the user exists, a reset token is generated and stored in the database along with an expiration time (1 hour).
+- The reset link sent in the email includes the token as a query parameter:
+http://<host>/user/LinkToVerifyToken?token=<resetToken>.
+- If the user does not exist, a 404 response is returned.
+
+### 9. Reset Password
+
+- **URL:** `user/reset-password`
+- **Method:** `POST`
+- **Description:** `Resets the user's password using a valid reset token.`
+
+#### Request:
+- Request Body:
+```json
+{
+  "resetToken": "reset-token-here",
+  "newPassword": "new-secure-password",
+  "confirmNewPassword": "confirm-nesecure-password"
+}
+
+```
+- 200 OK:
+```json
+{
+  "message": "Password reset successful"
+}
+
+```
+- 400 Bad Request: (Invalid token or expired token)
+
+```json
+{
+  "error": "Invalid or expired token"
+}
+
+```
+
+- 400 Bad Request: (Weak password)
+
+```json
+{
+  "error": "Password does not meet the OWASP password strength requirements. Reasons: <reasons>"
+}
+```
+- 400 Bad Request: (Reusing the same password)
+
+```json
+{
+  "error": "This password is already being used by you"
+}
+```
+
+#### Validation and Security:
+- **Token Validation:** The reset token is validated by checking its existence and expiration time in the database.
+- **Password Strength Validation:** The new password is checked against OWASP password strength requirements.
+- **Duplicate Password Check:** Ensures the new password is not the same as the current one.
+
 
 ## Technologies Used
 - Node.js
