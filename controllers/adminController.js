@@ -18,6 +18,8 @@ const admin = {
     const token = authHeader.split(" ")[1];
   
     let decodedToken;
+
+    console.log(token);
     
     // Verifica o tipo de autenticação
     if (authType === "Firebase") {
