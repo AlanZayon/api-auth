@@ -21,8 +21,8 @@ The API base URL is: [https://api-auth-6u2s.onrender.com](https://api-auth-6u2s.
   "username": "exampleUser",
   "email": "user@example.com",
   "confirmEmail": "user@example.com",
-  "password": "password123",
-  "confirmPassword": "password123",
+  "password": "PASS_word123",
+  "confirmPassword": "PASS_word123",
   "dateOfBirth": "1990-01-01"
 }
 ```
