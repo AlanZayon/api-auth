@@ -17,6 +17,7 @@ The API base URL is: [https://api-auth-6u2s.onrender.com](https://api-auth-6u2s.
 #### Request:
 ```json
 {
+  "firebaseUid":"firebaseUid gerado no front end",
   "username": "exampleUser",
   "email": "user@example.com",
   "confirmEmail": "user@example.com",
