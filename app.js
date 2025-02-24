@@ -46,7 +46,7 @@ app.set('trust proxy', 1);
 app.use(helmet());
 
 app.use(cors({
-	origin: ['http://localhost:5173', 'https://site-kong.netlify.app'],
+	origin: ['http://localhost:5173', 'https://site-kong.netlify.app', 'https://interface-auth.vercel.app'],
 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 	allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-type'],
 	exposedHeaders: ['Authorization-token']
